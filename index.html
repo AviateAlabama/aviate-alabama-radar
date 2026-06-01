@@ -40,8 +40,8 @@
       radial-gradient(120% 120% at 50% 50%, transparent 58%, rgba(0,0,0,.55) 100%);
     mix-blend-mode:multiply; opacity:.5}
 
-  .seg-radar,.seg-brief,.seg-weather{transition:opacity .55s ease; opacity:0; visibility:hidden}
-  .show-radar .seg-radar, .show-brief .seg-brief, .show-weather .seg-weather{opacity:1; visibility:visible}
+  .seg-radar,.seg-brief,.seg-weather,.seg-board,.seg-info{transition:opacity .55s ease; opacity:0; visibility:hidden}
+  .show-radar .seg-radar, .show-brief .seg-brief, .show-weather .seg-weather, .show-board .seg-board, .show-info .seg-info{opacity:1; visibility:visible}
 
   /* ── Header (persistent) ───────────────────────────────────── */
   header{position:absolute; top:0; left:0; right:0; height:96px; z-index:30;
@@ -234,6 +234,46 @@
   .wday .lo{font-family:var(--mono); font-size:19px; color:var(--dim); line-height:1.3}
   .wday .cond{font-size:13px; color:var(--gold); text-align:center; min-height:32px; line-height:1.25; margin-top:4px}
   .wday .wind{font-family:var(--mono); font-size:12px; color:var(--faint); letter-spacing:.06em}
+
+  /* ── FLIGHT BOARD screen ───────────────────────────────────── */
+  #board{position:absolute; left:54px; top:114px; right:54px; bottom:128px; z-index:12; display:grid; grid-template-rows:auto 1fr; gap:20px}
+  .bdhead{display:flex; align-items:baseline; gap:18px}
+  .bdhead h2{font-size:30px; font-weight:600; letter-spacing:.12em; color:var(--ink); text-shadow:0 0 18px rgba(212,184,90,.3)}
+  .bdhead .kick{font-family:var(--serif); font-style:italic; font-size:21px; color:var(--dim)}
+  .bdhead .bdate{margin-left:auto; font-family:var(--mono); font-size:14px; letter-spacing:.14em; color:var(--gold); font-weight:500}
+  .boards{display:grid; grid-template-columns:1fr 1fr; gap:22px; min-height:0}
+  .boardcol{display:flex; flex-direction:column; min-height:0; overflow:hidden}
+  .brows{flex:1; overflow:hidden; padding:4px 0}
+  .brow{display:grid; grid-template-columns:78px 104px 1fr 60px 104px; align-items:center; gap:10px; padding:12px 18px; border-bottom:1px solid var(--edge2); font-family:var(--mono)}
+  .brow.bhdr{padding:9px 18px; border-bottom:1px solid var(--edge)}
+  .brow.bhdr span{font-size:10px; letter-spacing:.16em; color:var(--faint)}
+  .brow .bt{color:var(--gold); font-weight:600; font-size:17px; font-variant-numeric:tabular-nums}
+  .brow .bf{color:var(--cream); font-weight:600; font-size:17px}
+  .brow .bo{color:var(--dim); font-size:15px}
+  .brow .bty{color:var(--faint); font-size:13px}
+  .brow .bs{font-size:11px; font-weight:600; letter-spacing:.07em; text-align:right}
+  .bs.ARRIVED,.bs.DEPARTED{color:var(--green)} .bs.ENROUTE{color:var(--gold)} .bs.SCHEDULED{color:var(--cream)} .bs.DELAYED{color:#E6A24E} .bs.CANCELLED{color:var(--coral)}
+  .bempty{padding:26px 18px; color:var(--faint); font-family:var(--mono); font-size:14px}
+
+  /* ── AIRPORT INFO screen ───────────────────────────────────── */
+  #info{position:absolute; left:54px; top:114px; right:54px; bottom:128px; z-index:12; display:grid; grid-template-rows:auto auto 1fr; gap:20px}
+  .ihead{display:flex; align-items:baseline; gap:18px}
+  .ihead h2{font-size:30px; font-weight:600; letter-spacing:.12em; color:var(--ink); text-shadow:0 0 18px rgba(212,184,90,.3)}
+  .ihead .kick{font-family:var(--serif); font-style:italic; font-size:21px; color:var(--dim)}
+  .ihead .bdate{margin-left:auto; font-family:var(--mono); font-size:15px; letter-spacing:.16em; color:var(--gold); font-weight:600}
+  .itiles{display:grid; grid-template-columns:repeat(6,1fr); gap:16px}
+  .igrid{display:grid; grid-template-columns:1fr 1.2fr 1fr; gap:18px; min-height:0}
+  .icd{display:flex; flex-direction:column; min-height:0}
+  .icd .bd{flex:1; min-height:0; overflow:hidden}
+  .rwylist{display:flex; flex-wrap:wrap; gap:10px}
+  .rwylist .rwy{font-family:var(--mono); font-size:18px; font-weight:600; color:var(--ink); padding:8px 13px; border-radius:8px; background:rgba(212,184,90,.12); border:1px solid var(--edge)}
+  .carrow{display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--edge2)}
+  .carrow .cn{font-size:16px; color:var(--ink); font-weight:500}
+  .carrow .cc{font-family:var(--mono); font-size:13px; color:var(--gold); font-weight:600}
+  .glance > div{display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid var(--edge2)}
+  .glance .gk{font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--faint)}
+  .glance .gv{font-size:15px; color:var(--ink); font-weight:500; text-align:right}
+  .muted{color:var(--faint); font-size:14px}
 
   /* ── Segment bar (persistent) ──────────────────────────────── */
   .segbar{position:absolute; left:50%; bottom:80px; transform:translateX(-50%); z-index:38;
@@ -428,12 +468,49 @@
       </div>
     </section>
 
+    <!-- ═══ SEGMENT 4 · FLIGHT BOARD ═══ -->
+    <section id="board" class="seg-board">
+      <div class="bdhead"><h2>FLIGHT BOARD</h2><span class="kick">arrivals &amp; departures</span><div class="bdate" id="bdDate">—</div></div>
+      <div class="boards">
+        <div class="card boardcol">
+          <div class="hd">ARRIVALS</div>
+          <div class="brow bhdr"><span>TIME</span><span>FLIGHT</span><span>FROM</span><span>A/C</span><span style="text-align:right">STATUS</span></div>
+          <div class="brows" id="arrRows"></div>
+        </div>
+        <div class="card boardcol">
+          <div class="hd">DEPARTURES</div>
+          <div class="brow bhdr"><span>TIME</span><span>FLIGHT</span><span>TO</span><span>A/C</span><span style="text-align:right">STATUS</span></div>
+          <div class="brows" id="depRows"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SEGMENT 5 · AIRPORT INFO ═══ -->
+    <section id="info" class="seg-info">
+      <div class="ihead"><h2>AIRPORT INFORMATION</h2><span class="kick" id="iName">—</span><div class="bdate" id="iIcao">—</div></div>
+      <div class="itiles">
+        <div class="bt"><div class="v" id="iIata">—</div><div class="k">IATA</div></div>
+        <div class="bt"><div class="v" id="iElev">—</div><div class="k">FIELD ELEV</div></div>
+        <div class="bt"><div class="v" id="iRwys">—</div><div class="k">RUNWAYS</div></div>
+        <div class="bt"><div class="v" id="iInstr">—</div><div class="k">INSTRUMENT</div></div>
+        <div class="bt"><div class="v" id="iOps">—</div><div class="k">OPS TODAY</div></div>
+        <div class="bt"><div class="v" id="iAvg">—</div><div class="k">AVG / DAY</div></div>
+      </div>
+      <div class="igrid">
+        <div class="card icd"><div class="hd">RUNWAYS</div><div class="bd"><div class="rwylist" id="iRwyList"></div></div></div>
+        <div class="card icd"><div class="hd">AIRLINE TRAFFIC IN AREA</div><div class="bd"><div id="iCarriers"></div></div></div>
+        <div class="card icd"><div class="hd">AT A GLANCE</div><div class="bd"><div class="glance" id="iGlance"></div></div></div>
+      </div>
+    </section>
+
     <!-- segment selector (persistent) -->
     <div class="segbar">
       <span class="lbl">ON AIR</span>
       <div class="spill on" data-i="0">RADAR</div>
-      <div class="spill" data-i="1">DAILY BRIEFING</div>
-      <div class="spill" data-i="2">WEATHER</div>
+      <div class="spill" data-i="1">BOARD</div>
+      <div class="spill" data-i="2">BRIEFING</div>
+      <div class="spill" data-i="3">WEATHER</div>
+      <div class="spill" data-i="4">AIRPORT</div>
       <div class="segprog"><i id="segprog"></i></div>
     </div>
 
@@ -452,7 +529,9 @@
    Pulls live data from the AeroPattern `overlay` edge function
    every 15s; falls back to the embedded MOCK if unreachable.
    ──────────────────────────────────────────────────────────── */
-const ENDPOINT = 'https://ykcseqacsheysxxysrdg.supabase.co/functions/v1/overlay?icao=KPDK';
+// Multi-airport: ICAO from /tv/<icao> path, or ?icao=, default KPDK.
+const ICAO = ((location.pathname.match(/\/tv\/([A-Za-z0-9]{3,4})(?:\/|$)/)||[])[1] || new URLSearchParams(location.search).get('icao') || 'KPDK').toUpperCase();
+const ENDPOINT = `https://ykcseqacsheysxxysrdg.supabase.co/functions/v1/overlay?icao=${ICAO}`;
 
 // ── MOCK fallback (only used until/unless the live feed responds) ──
 const MOCK = {
@@ -556,11 +635,13 @@ function buildScope(){
   };
   draw(act, true, pad2(num));
   draw((act+180)%360, false, pad2((num+18)%36||36));
-  // Nearby SE airports as fixed reference markers (positions relative to KPDK)
-  const REF_APTS=[{c:'KATL',x:289,y:751},{c:'KFTY',x:185,y:560},{c:'KMGE',x:191,y:377},{c:'KRYY',x:99,y:245},{c:'KLZU',x:809,y:292}];
-  for(const ar of REF_APTS){
-    add('rect',{class:'aptdot', x:ar.x-3.5, y:ar.y-3.5, width:7, height:7, transform:`rotate(45 ${ar.x} ${ar.y})`});
-    const t=add('text',{class:'aptref', x:ar.x, y:ar.y+16}); t.setAttribute('text-anchor','middle'); t.textContent=ar.c;
+  // Nearby SE airports as fixed reference markers (KPDK-relative positions)
+  if(ICAO==='KPDK'){
+    const REF_APTS=[{c:'KATL',x:289,y:751},{c:'KFTY',x:185,y:560},{c:'KMGE',x:191,y:377},{c:'KRYY',x:99,y:245},{c:'KLZU',x:809,y:292}];
+    for(const ar of REF_APTS){
+      add('rect',{class:'aptdot', x:ar.x-3.5, y:ar.y-3.5, width:7, height:7, transform:`rotate(45 ${ar.x} ${ar.y})`});
+      const t=add('text',{class:'aptref', x:ar.x, y:ar.y+16}); t.setAttribute('text-anchor','middle'); t.textContent=ar.c;
+    }
   }
 }
 
@@ -701,8 +782,38 @@ function buildWeather(){
     days.appendChild(d); });
 }
 
+/* ── Flight board ── */
+function buildBoard(){
+  $('bdDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}).toUpperCase().replace(',',' ·');
+  const row=(f,end)=>`<div class="brow"><span class="bt">${f.time||'--:--'}</span><span class="bf">${f.cs||'—'}</span><span class="bo">${end||'—'}</span><span class="bty">${f.type||''}</span><span class="bs ${(f.status||'').replace(/\s+/g,'')}">${f.status||''}</span></div>`;
+  const A=DATA.arrivals||[], D=DATA.departures||[];
+  $('arrRows').innerHTML=A.length?A.map(f=>row(f,f.from)).join(''):'<div class="bempty">No arrivals on the board right now.</div>';
+  $('depRows').innerHTML=D.length?D.map(f=>row(f,f.to)).join(''):'<div class="bempty">No departures on the board right now.</div>';
+}
+/* ── Airport info ── */
+function buildInfo(){
+  const a=DATA.airport||{}, b=DATA.brief||{}, o=DATA.ops||{};
+  $('iName').textContent=up(DATA.name||a.name||'');
+  $('iIcao').textContent=(DATA.icao||a.icao||'')+(a.iata?` · ${a.iata}`:'');
+  $('iIata').textContent=a.iata||'—';
+  $('iElev').innerHTML=(a.elev!=null?Number(a.elev).toLocaleString('en-US'):'—')+`<small style="font-size:18px;color:var(--dim)">'</small>`;
+  $('iRwys').textContent=a.runwayCount!=null?a.runwayCount:'—';
+  $('iInstr').textContent=a.instrument?'YES':'NO';
+  $('iOps').textContent=b.totalOps!=null?b.totalOps:(o.today!=null?o.today:'—');
+  $('iAvg').textContent=b.avgPerDay!=null?b.avgPerDay:'—';
+  const R=a.runways||[];
+  $('iRwyList').innerHTML=R.length?R.map(r=>`<span class="rwy">${r}</span>`).join(''):'<span class="muted">Runway data unavailable</span>';
+  const C=DATA.carriers||[];
+  $('iCarriers').innerHTML=C.length?C.map(c=>`<div class="carrow"><span class="cn">${c.name}</span><span class="cc">${c.code}</span></div>`).join(''):'<div class="muted">General aviation — no scheduled airline service.</div>';
+  $('iGlance').innerHTML=
+    `<div><span class="gk">LOCATION</span><span class="gv">${a.city||DATA.region||'—'}${a.state?', '+a.state:''}</span></div>`+
+    `<div><span class="gk">TOP ROUTE</span><span class="gv">${b.topRoute||'—'}</span></div>`+
+    `<div><span class="gk">COMMON A/C</span><span class="gv">${(b.airframes&&b.airframes[0])?b.airframes[0].name:'—'}</span></div>`+
+    `<div><span class="gk">APPROACHES</span><span class="gv">${a.instrument?'Instrument (IAP)':'Visual'}${a.privateUse?' · Private use':''}</span></div>`;
+}
+
 /* ── Render the whole frame from the current DATA ── */
-function render(){ buildScope(); buildBlips(); bindPanels(); buildBrief(); buildWeather(); buildTicker(); }
+function render(){ buildScope(); buildBlips(); bindPanels(); buildBrief(); buildWeather(); buildBoard(); buildInfo(); buildTicker(); }
 
 /* ── Live clock ── */
 (function clock(){ const d=new Date();
@@ -712,7 +823,7 @@ function render(){ buildScope(); buildBlips(); bindPanels(); buildBrief(); build
 })();
 
 /* ── Segment rotation (24/7 auto-cycle) ── */
-const SEGS=['radar','brief','weather'], DWELL=[14000,16000,14000];
+const SEGS=['radar','board','brief','weather','info'], DWELL=[14000,15000,15000,13000,14000];
 let cur=0, segTimer=null;
 function show(i){
   cur=(i+SEGS.length)%SEGS.length;
