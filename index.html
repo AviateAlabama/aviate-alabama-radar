@@ -97,6 +97,8 @@
   .tri{position:absolute; left:-7px; top:-9px; width:0; height:0;
     border-left:7px solid transparent; border-right:7px solid transparent; border-bottom:15px solid var(--c); filter:drop-shadow(0 0 5px var(--c))}
   .trail{position:absolute; left:-1.5px; top:1px; width:3px; height:34px; background:linear-gradient(var(--c), transparent); opacity:.45; border-radius:3px}
+  /* Ambient (untagged) traffic — small, faint, no trail/glow so featured aircraft stand out */
+  .blip.lo .tri{left:-4px; top:-5px; border-left-width:4px; border-right-width:4px; border-bottom-width:9px; opacity:.4; filter:none}
   .tag{position:absolute; z-index:15; line-height:1.1; white-space:nowrap; padding-left:9px; border-left:2px solid var(--c)}
   .tag b{display:block; font-family:var(--mono); font-size:15px; font-weight:600; letter-spacing:.02em; color:#fff; text-shadow:0 0 8px var(--c)}
   .tag span{display:block; font-family:var(--mono); font-size:11px; color:var(--dim); letter-spacing:.02em}
@@ -648,21 +650,30 @@ function buildScope(){
 /* ── Aircraft blips (rebuilt per render) ── */
 function place(f){ f.b.style.left=f.x+'px'; f.b.style.top=f.y+'px'; if(f.tg){ f.tg.style.left=(f.x+15)+'px'; f.tg.style.top=(f.y-32)+'px'; } }
 function buildBlips(){
-  const blips=$('blips'), tags=$('tags'); blips.innerHTML=''; tags.innerHTML=''; const placed=[];
-  fleet = (DATA.planes||[]).filter(p=>p&&p.rel).map(p=>{
+  const blips=$('blips'), tags=$('tags'); blips.innerHTML=''; tags.innerHTML=''; const placed=[], dots=[];
+  const MINGAP=32, MAXLO=24; let lo=0;   // thin dense clusters + cap ambient blips so the radar reads clean
+  fleet=[];
+  (DATA.planes||[]).filter(p=>p&&p.rel).forEach(p=>{
     const x=p.rel[0]*D, y=p.rel[1]*D, c=colorFor(p.alt||0);
-    const b=document.createElement('div'); b.className='blip';
+    if(!p.tag){                                   // ambient traffic: cap + spatial-thin so clusters don't blob
+      if(lo>=MAXLO) return;
+      if(dots.some(q=>Math.abs(q[0]-x)<MINGAP && Math.abs(q[1]-y)<MINGAP)) return;
+      dots.push([x,y]); lo++;
+    }
+    const b=document.createElement('div'); b.className=p.tag?'blip':'blip lo';
     b.style.cssText=`left:${x}px;top:${y}px;transform:rotate(${p.rot}deg)`; b.style.setProperty('--c',c);
-    b.innerHTML='<div class="trail"></div><div class="tri"></div>'; blips.appendChild(b);
+    b.innerHTML=p.tag?'<div class="trail"></div><div class="tri"></div>':'<div class="tri"></div>'; blips.appendChild(b);
     let tg=null;
-    const tx=x+15, ty=y-32, clash=placed.some(q=>Math.abs(q[0]-tx)<150 && Math.abs(q[1]-ty)<46);
-    if(p.tag && !clash){ placed.push([tx,ty]); tg=document.createElement('div'); tg.className='tag'; tg.style.setProperty('--c',c);
-      const sub=p.type?`${p.type} · ${fmtAlt(p.alt)} ft`:`${fmtAlt(p.alt)} ft`;
-      const own=p.owner?`<span class="own">${p.owner}</span>`:'';
-      const rt=(p.from||p.to)?`<span class="rt">${p.from||'?'} → ${p.to||'?'}</span>`:'';
-      tg.innerHTML=`<b>${p.cs}</b><span>${sub}</span>${own}${rt}`; tags.appendChild(tg); }
+    if(p.tag){
+      const tx=x+15, ty=y-32, clash=placed.some(q=>Math.abs(q[0]-tx)<150 && Math.abs(q[1]-ty)<46);
+      if(!clash){ placed.push([tx,ty]); tg=document.createElement('div'); tg.className='tag'; tg.style.setProperty('--c',c);
+        const sub=p.type?`${p.type} · ${fmtAlt(p.alt)} ft`:`${fmtAlt(p.alt)} ft`;
+        const own=p.owner?`<span class="own">${p.owner}</span>`:'';
+        const rt=(p.from||p.to)?`<span class="rt">${p.from||'?'} → ${p.to||'?'}</span>`:'';
+        tg.innerHTML=`<b>${p.cs}</b><span>${sub}</span>${own}${rt}`; tags.appendChild(tg); }
+    }
     const a=(p.rot-90)*Math.PI/180;
-    return {b, tg, x, y, vx:Math.cos(a)*5, vy:Math.sin(a)*5};
+    fleet.push({b, tg, x, y, vx:Math.cos(a)*5, vy:Math.sin(a)*5});
   });
   fleet.forEach(place);
 }
