@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Aviate Alabama · KPDK Live Radar</title>
+<title>AeroPattern · KPDK Live Radar</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@1&display=swap');
 
@@ -51,7 +51,7 @@
   .brand{display:flex; align-items:center; gap:16px}
   .mark{width:52px; height:52px; flex:none; display:grid; place-items:center; color:var(--cream)}
   .mark svg{width:46px; height:46px; filter:drop-shadow(0 0 8px rgba(240,235,224,.22))}
-  .brand h1{font-size:26px; font-weight:600; letter-spacing:.1em; line-height:1}
+  .brand h1{font-size:30px; font-weight:600; letter-spacing:-.02em; line-height:1}
   .brand .sub{font-family:var(--mono); font-size:11px; letter-spacing:.34em; color:var(--gold); font-weight:500; margin-top:6px}
   .apt{text-align:center; line-height:1}
   .apt .id{font-size:44px; font-weight:600; letter-spacing:.1em; text-shadow:0 0 22px rgba(212,184,90,.35)}
@@ -248,7 +248,7 @@
             <g transform="rotate(-14 50 50)"><path d="M8 86 L50 10 L92 86"/><path d="M24 86 L50 38 L76 86"/><path d="M40 86 L50 66 L60 86"/></g>
           </svg>
         </div>
-        <div><h1>AVIATE ALABAMA</h1><div class="sub">LIVE AIRPORT RADAR</div></div>
+        <div><h1>AeroPattern</h1><div class="sub">LIVE AIRPORT RADAR</div></div>
       </div>
       <div class="apt">
         <div class="id" id="aptId">KPDK</div>
@@ -394,7 +394,7 @@
 
     <!-- ticker (persistent) -->
     <div class="ticker">
-      <div class="tkr-tag">AVIATE ALABAMA</div>
+      <div class="tkr-tag">AEROPATTERN</div>
       <div class="tkr-wrap"><div class="tkr-move" id="tkr"></div></div>
     </div>
 
@@ -609,7 +609,7 @@ function buildTicker(){
   if(m.raw) it.push(`<span class="it"><b>WX</b>${String(m.raw).replace('METAR ','').replace('KPDK ','')}</span>`);
   const af=(b.airframes&&b.airframes[0])?b.airframes[0].type:'';
   it.push(`<span class="it"><b>TODAY</b>${b.departures??0} dep · ${b.arrivals??0} arr${b.topRoute?` · top route ${b.topRoute}`:''}${af?` · most common ${af}`:''}</span>`);
-  it.push(`<span class="it"><b>POWERED BY AEROPATTERN</b>aeropattern.com · live airport radar</span>`);
+  it.push(`<span class="it"><b>AEROPATTERN.COM</b>live airport radar · an Aviate Alabama production</span>`);
   const html=it.join('<span class="sep">  ·  </span>')+'<span class="sep">  ·  </span>';
   $('tkr').innerHTML=html+html;
 }
