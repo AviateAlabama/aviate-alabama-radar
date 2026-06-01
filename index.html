@@ -164,7 +164,7 @@
 
   /* ── DAILY BRIEFING screen ─────────────────────────────────── */
   #brief{position:absolute; left:54px; top:114px; right:54px; bottom:128px; z-index:12;
-    display:grid; grid-template-rows:auto auto 1fr 340px; gap:18px}
+    display:grid; grid-template-rows:auto auto auto 1fr 300px; gap:18px}
   .bhead{display:flex; align-items:baseline; gap:18px}
   .bhead h2{font-size:30px; font-weight:600; letter-spacing:.12em; color:var(--ink); text-shadow:0 0 18px rgba(212,184,90,.3)}
   .bhead .kick{font-family:var(--serif); font-style:italic; font-size:21px; color:var(--dim)}
@@ -190,7 +190,7 @@
   .bar .hx{font-family:var(--mono); font-size:11px; color:var(--faint); margin-top:7px; height:12px}
   .bar .blab{position:absolute; top:-2px; transform:translateY(-100%); font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.08em; white-space:nowrap; padding:2px 6px; border-radius:4px}
   .bar .blab.busy{color:var(--navy); background:var(--gold)} .bar .blab.slow{color:#fff; background:var(--coral)}
-  .brow{display:grid; grid-template-columns:1fr 1.1fr 1fr; gap:18px; min-height:0}
+  .bcards{display:grid; grid-template-columns:1fr 1.1fr 1fr; gap:18px; min-height:0}
   .bcd{display:flex; flex-direction:column}
   .bcd .bd{flex:1; min-height:0}
   .clist{display:grid; grid-template-columns:1fr 1fr; gap:13px 18px}
@@ -418,7 +418,7 @@
         <div class="hd">TRAFFIC BY HOUR · ZULU</div>
         <div class="chart" id="chart"></div>
       </div>
-      <div class="brow">
+      <div class="bcards">
         <div class="card bcd">
           <div class="hd">CURRENT CONDITIONS</div>
           <div class="bd">
