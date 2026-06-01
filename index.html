@@ -98,7 +98,9 @@
   .trail{position:absolute; left:-1.5px; top:1px; width:3px; height:34px; background:linear-gradient(var(--c), transparent); opacity:.45; border-radius:3px}
   .tag{position:absolute; z-index:15; line-height:1.1; white-space:nowrap; padding-left:9px; border-left:2px solid var(--c)}
   .tag b{display:block; font-family:var(--mono); font-size:15px; font-weight:600; letter-spacing:.02em; color:#fff; text-shadow:0 0 8px var(--c)}
-  .tag span{font-family:var(--mono); font-size:11px; color:var(--dim); letter-spacing:.02em}
+  .tag span{display:block; font-family:var(--mono); font-size:11px; color:var(--dim); letter-spacing:.02em}
+  .tag .own{color:var(--cream); font-size:10.5px; font-weight:500; max-width:240px; overflow:hidden; text-overflow:ellipsis}
+  .tag .rt{color:var(--gold); font-size:10.5px}
 
   /* ── Cards ─────────────────────────────────────────────────── */
   .card{background:var(--panel); border:1px solid var(--edge); border-radius:14px;
@@ -522,8 +524,10 @@ function buildBlips(){
     b.innerHTML='<div class="trail"></div><div class="tri"></div>'; blips.appendChild(b);
     let tg=null;
     if(p.tag){ tg=document.createElement('div'); tg.className='tag'; tg.style.setProperty('--c',c);
-      const sub=p.type?`${fmtAlt(p.alt)} · ${p.type}`:`${fmtAlt(p.alt)} ft`;
-      tg.innerHTML=`<b>${p.cs}</b><span>${sub}</span>`; tags.appendChild(tg); }
+      const sub=p.type?`${p.type} · ${fmtAlt(p.alt)} ft`:`${fmtAlt(p.alt)} ft`;
+      const own=p.owner?`<span class="own">${p.owner}</span>`:'';
+      const rt=(p.from||p.to)?`<span class="rt">${p.from||'?'} → ${p.to||'?'}</span>`:'';
+      tg.innerHTML=`<b>${p.cs}</b><span>${sub}</span>${own}${rt}`; tags.appendChild(tg); }
     const a=(p.rot-90)*Math.PI/180;
     return {b, tg, x, y, vx:Math.cos(a)*5, vy:Math.sin(a)*5};
   });
