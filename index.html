@@ -246,11 +246,14 @@
   .boards{display:grid; grid-template-columns:1fr 1fr; gap:22px; min-height:0}
   .boardcol{display:flex; flex-direction:column; min-height:0; overflow:hidden}
   .brows{flex:1; overflow:hidden; padding:4px 0}
-  .brow{display:grid; grid-template-columns:78px 104px 1fr 60px 104px; align-items:center; gap:10px; padding:12px 18px; border-bottom:1px solid var(--edge2); font-family:var(--mono)}
+  .brow{display:grid; grid-template-columns:70px minmax(0,1.5fr) 58px 52px 92px; align-items:center; gap:10px; padding:9px 18px; border-bottom:1px solid var(--edge2); font-family:var(--mono)}
   .brow.bhdr{padding:9px 18px; border-bottom:1px solid var(--edge)}
   .brow.bhdr span{font-size:10px; letter-spacing:.16em; color:var(--faint)}
-  .brow .bt{color:var(--gold); font-weight:600; font-size:17px; font-variant-numeric:tabular-nums}
+  .brow .btm{color:var(--gold); font-weight:600; font-size:17px; font-variant-numeric:tabular-nums}
   .brow .bf{color:var(--cream); font-weight:600; font-size:17px}
+  .brow .bcs{display:flex; flex-direction:column; min-width:0}
+  .brow .bcs b{color:var(--cream); font-weight:600; font-size:16px; line-height:1.15}
+  .brow .bcs i{font-style:normal; color:var(--faint); font-size:10.5px; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; margin-top:1px}
   .brow .bo{color:var(--dim); font-size:15px}
   .brow .bty{color:var(--faint); font-size:13px}
   .brow .bs{font-size:11px; font-weight:600; letter-spacing:.07em; text-align:right}
@@ -796,7 +799,7 @@ function buildWeather(){
 /* ── Flight board ── */
 function buildBoard(){
   $('bdDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}).toUpperCase().replace(',',' ·');
-  const row=(f,end)=>`<div class="brow"><span class="bt">${f.time||'--:--'}</span><span class="bf">${f.cs||'—'}</span><span class="bo">${end||'—'}</span><span class="bty">${f.type||''}</span><span class="bs ${(f.status||'').replace(/\s+/g,'')}">${f.status||''}</span></div>`;
+  const row=(f,end)=>`<div class="brow"><span class="btm">${f.time||'--:--'}</span><span class="bcs"><b>${f.cs||'—'}</b>${f.owner?`<i>${f.owner}</i>`:''}</span><span class="bo">${end||'—'}</span><span class="bty">${f.type||''}</span><span class="bs ${(f.status||'').replace(/\s+/g,'')}">${f.status||''}</span></div>`;
   const A=DATA.arrivals||[], D=DATA.departures||[];
   $('arrRows').innerHTML=A.length?A.map(f=>row(f,f.from)).join(''):'<div class="bempty">No arrivals on the board right now.</div>';
   $('depRows').innerHTML=D.length?D.map(f=>row(f,f.to)).join(''):'<div class="bempty">No departures on the board right now.</div>';
