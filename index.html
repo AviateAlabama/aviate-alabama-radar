@@ -77,6 +77,8 @@
   .tick.card{stroke:rgba(212,184,90,.6); stroke-width:2.4}
   .cardlbl{fill:var(--dim); font:600 18px 'Instrument Sans'; letter-spacing:.1em}
   .rnglbl{fill:var(--faint); font:500 13px var(--mono)}
+  .aptref{fill:rgba(240,235,224,.5); font:500 11px var(--mono); letter-spacing:.04em}
+  .aptdot{fill:none; stroke:rgba(240,235,224,.45); stroke-width:1.4}
   .rwy{stroke:var(--gold); stroke-width:7; stroke-linecap:round; opacity:.5; filter:drop-shadow(0 0 6px rgba(212,184,90,.5))}
   .rwy.act{opacity:.95}
   .rwynum{fill:var(--navy); font:600 13px var(--mono)}
@@ -114,6 +116,9 @@
 
   #wx{left:60px; top:148px; width:392px}
   .cat{margin-left:auto; font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.1em; padding:3px 10px; border-radius:6px; background:rgba(63,179,111,.18); color:var(--green); border:1px solid rgba(63,179,111,.42)}
+  .wxnow{display:flex; align-items:center; gap:11px; margin-bottom:14px}
+  .wxnow .wico{width:38px; height:38px; flex:none}
+  .wxnow .wcond{font-size:17px; color:var(--gold); font-weight:600; letter-spacing:.02em}
   .wgrid{display:grid; grid-template-columns:1fr 1fr; gap:13px 16px}
   .cell .k{font-family:var(--mono); font-size:11px; letter-spacing:.16em; color:var(--faint); font-weight:500}
   .cell .v{font-family:var(--mono); font-size:24px; font-weight:600; margin-top:4px; font-variant-numeric:tabular-nums}
@@ -293,6 +298,7 @@
     <div class="card abs seg-radar" id="wx">
       <div class="hd">METAR · CONDITIONS <span class="cat" id="cat">VFR</span></div>
       <div class="bd">
+        <div class="wxnow"><span class="wico" id="radarWxIco"></span><span class="wcond" id="radarWxCond">—</span></div>
         <div class="wgrid">
           <div class="cell"><div class="k">WIND</div><div class="v" id="wWind">—</div></div>
           <div class="cell"><div class="k">VISIBILITY</div><div class="v" id="wVis">—</div></div>
@@ -550,6 +556,12 @@ function buildScope(){
   };
   draw(act, true, pad2(num));
   draw((act+180)%360, false, pad2((num+18)%36||36));
+  // Nearby SE airports as fixed reference markers (positions relative to KPDK)
+  const REF_APTS=[{c:'KATL',x:289,y:751},{c:'KFTY',x:185,y:560},{c:'KMGE',x:191,y:377},{c:'KRYY',x:99,y:245},{c:'KLZU',x:809,y:292}];
+  for(const ar of REF_APTS){
+    add('rect',{class:'aptdot', x:ar.x-3.5, y:ar.y-3.5, width:7, height:7, transform:`rotate(45 ${ar.x} ${ar.y})`});
+    const t=add('text',{class:'aptref', x:ar.x, y:ar.y+16}); t.setAttribute('text-anchor','middle'); t.textContent=ar.c;
+  }
 }
 
 /* ── Aircraft blips (rebuilt per render) ── */
@@ -587,6 +599,9 @@ function bindPanels(){
   $('aptId').textContent=DATA.icao||'—'; $('ctrlbl').textContent=DATA.icao||''; $('aptNm').textContent=up(DATA.name);
   $('aptMeta').innerHTML=`${DATA.region||''} · ELEV <b>${DATA.elev!=null?DATA.elev:'—'}'</b> · ${DATA.towered?'TOWERED':'NON-TWR'}`;
   $('cat').textContent=m.fltCat||'—';
+  const wxK=(DATA.wxForecast&&DATA.wxForecast[0])?DATA.wxForecast[0].icon:(/OVC|BKN/.test(m.sky||'')?'cloud':'sun');
+  if($('radarWxIco')) $('radarWxIco').innerHTML=wxIcon(wxK);
+  if($('radarWxCond')) $('radarWxCond').textContent=(DATA.wxForecast&&DATA.wxForecast[0])?DATA.wxForecast[0].short:(m.fltCat||'');
   $('wWind').textContent=m.windNice||'—'; $('wVis').textContent=m.vis||'—'; $('wSky').textContent=m.sky||'—';
   $('wTemp').innerHTML=`${m.temp||'—'} <small>°C</small>`; $('wAlt').textContent=m.alt||'—'; $('wElev').textContent=m.tempF||'—';
   $('wRwy').textContent='RWY '+((DATA.runways&&DATA.runways.active)||'—');
